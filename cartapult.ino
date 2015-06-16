@@ -1,6 +1,15 @@
 #include <SPI.h>
 #include <WiFi.h>
 
+// Define the pins that power the motors.
+const int Motor1Pin1 = 8;
+const int Motor1Pin2 = 9;
+const int Motor2Pin2 = 5;
+const int Motor2Pin1 = 6;
+
+
+// Initialize some variables for the WiFi
+// Includes the network name, password, and port
 char ssid[] = "";
 char pass[] = "";
 int status = WL_IDLE_STATUS;
@@ -12,27 +21,39 @@ boolean alreadyConnected = false;
 void setup() {
     Serial.begin(9600);
     initializeMotors();
-    startServer();
+    //startServer();
 }
 
 
 void loop() {
-    getClientMessage();
+    //getClientMessage();
+    
+    Serial.println("Moving");
+    moveForwards();
+    delay(5000);
+    
+    Serial.println("Stopping");
+    stopMoving();
+    delay(5000);
 }
 
+
 void initializeMotors() {
-    
+    pinMode(Motor1Pin1, OUTPUT);   
+    pinMode(Motor1Pin2, OUTPUT);   
+    pinMode(Motor2Pin1, OUTPUT);   
+    pinMode(Motor2Pin2, OUTPUT);
 }
 
 void startServer() {
-    // check for the presence of the shield:
+    // Check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present"); 
-        // don't continue:
+        // Don't continue:
         while(true);
     }
 
-    // attempt to connect to Wifi network:
+    // Attempt to connect to Wifi network:
     while ( status != WL_CONNECTED) { 
         Serial.print("Attempting to connect to SSID: ");
         Serial.println(ssid);
@@ -40,7 +61,7 @@ void startServer() {
         // Connect to WPA/WPA2 network.
         status = WiFi.begin(ssid, pass);
 
-        // wait 10 seconds for connection:
+        // Wait 10 seconds for connection:
         delay(10000);
     } 
     server.begin();
@@ -51,13 +72,13 @@ void startServer() {
 
 
 void getClientMessage() {
-    // wait for a new client:
+    // Wait for a new client:
     WiFiClient client = server.available();
     
-    // when the client sends the first byte, say hello:
+    // When the client sends the first byte, say hello:
     if (client) {
         if (!alreadyConnected) {
-            // clead out the input buffer:
+            // Clean out the input buffer:
             client.flush();    
             Serial.println("We have a new client");
             client.println("Hello, client!"); 
@@ -66,9 +87,9 @@ void getClientMessage() {
         
         if (client.available() > 0) {
             char thisChar = client.read();
-            // echo the bytes back to the client:
+            // Echo the bytes back to the client:
             server.write(thisChar);
-            // echo the bytes to the server as well:
+            // Echo the bytes to the server as well:
             Serial.write(thisChar);
         }
     }
@@ -78,19 +99,34 @@ void getClientMessage() {
 
 
 void printWifiStatus() {
-    // print the SSID of the network you're attached to:
+    // Print the SSID of the network you're attached to:
     Serial.print("SSID: ");
     Serial.println(WiFi.SSID());
     
-    // print your WiFi shield's IP address:
+    // Print your WiFi shield's IP address:
     IPAddress ip = WiFi.localIP();
     Serial.print("IP Address: ");
     Serial.println(ip);
     
-    // print the received signal strength:
+    // Print the received signal strength:
     long rssi = WiFi.RSSI();
     Serial.print("signal strength (RSSI):");
     Serial.print(rssi);
     Serial.println(" dBm");
+}
+
+
+void moveForwards() {
+    digitalWrite(Motor1Pin1, LOW);
+    digitalWrite(Motor1Pin2, HIGH);
+    digitalWrite(Motor2Pin1, LOW);
+    digitalWrite(Motor2Pin2, HIGH);
+}
+
+void stopMoving() {
+    digitalWrite(Motor1Pin2, LOW);
+    digitalWrite(Motor1Pin1, LOW);
+    digitalWrite(Motor2Pin1, LOW);
+    digitalWrite(Motor2Pin2, LOW);
 }
 
