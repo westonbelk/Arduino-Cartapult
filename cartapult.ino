@@ -11,27 +11,18 @@ boolean alreadyConnected = false;
 
 void setup() {
     Serial.begin(9600);
-    powerMotors();
+    initializeMotors();
     startServer();
 }
 
 
 void loop() {
     getClientMessage();
-
 }
 
-
-void powerMotors() {
-    pinMode(8, OUTPUT);
-    pinMode(9, OUTPUT);
-    digitalWrite(8, HIGH);
-    digitalWrite(9, HIGH);
-    Serial.println("Motors Activated");
+void initializeMotors() {
+    
 }
-
-
-
 
 void startServer() {
     // check for the presence of the shield:
