@@ -33,11 +33,20 @@ void loop() {
     if(message.length() > 0) {
         Serial.println("[CLIENT]: " + message);
         
-        if(message == "/go" || message == "/start") {
+        if (message == "/help") {
+            Serial.println("-----\nAvailable Commands\n-----\n/forwards\n/stop\n/launch\n/retract\n-----");
+        }
+        else if(message == "/forwards") {
             moveForwards();
         }
         else if (message == "/stop") {
             stopWheels();
+        }
+        else if (message == "/launch") {
+            moveArm();
+        }
+        else if (message == "/retract") {
+            stopArm();
         }
     }
 }
