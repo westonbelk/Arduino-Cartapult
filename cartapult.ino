@@ -4,8 +4,10 @@
 // Define the pins that power the motors.
 const int Motor1Pin1 = 8;
 const int Motor1Pin2 = 9;
-const int Motor2Pin2 = 5;
 const int Motor2Pin1 = 6;
+const int Motor2Pin2 = 5;
+const int MotorArmPin1 = 3;
+const int MotorArmPin2 = 4;
 
 
 // Initialize some variables for the WiFi
@@ -21,28 +23,29 @@ boolean alreadyConnected = false;
 void setup() {
     Serial.begin(9600);
     initializeMotors();
-    //startServer();
+    startServer();
+    
+    //moveForwards();
+    //moveArm();
 }
 
 
 void loop() {
-    //getClientMessage();
+    String message = getClientMessage();
     
-    Serial.println("Moving");
-    moveForwards();
-    delay(5000);
-    
-    Serial.println("Stopping");
-    stopMoving();
-    delay(5000);
+    if(message.length() > 0) {
+        Serial.println(message);
+    }
 }
 
 
 void initializeMotors() {
-    pinMode(Motor1Pin1, OUTPUT);   
-    pinMode(Motor1Pin2, OUTPUT);   
-    pinMode(Motor2Pin1, OUTPUT);   
+    pinMode(Motor1Pin1, OUTPUT);
+    pinMode(Motor1Pin2, OUTPUT);
+    pinMode(Motor2Pin1, OUTPUT);
     pinMode(Motor2Pin2, OUTPUT);
+    pinMode(MotorArmPin1, OUTPUT);
+    pinMode(MotorArmPin2, OUTPUT);
 }
 
 void startServer() {
@@ -71,28 +74,29 @@ void startServer() {
 
 
 
-void getClientMessage() {
+String getClientMessage() {
     // Wait for a new client:
     WiFiClient client = server.available();
+    String message;
     
     // When the client sends the first byte, say hello:
     if (client) {
         if (!alreadyConnected) {
             // Clean out the input buffer:
-            client.flush();    
-            Serial.println("We have a new client");
-            client.println("Hello, client!"); 
+            client.flush();
+            Serial.println("New client connected.");
+            client.println("Hello, client!");
             alreadyConnected = true;
         } 
         
-        if (client.available() > 0) {
+        while (client.available() > 0) {
             char thisChar = client.read();
-            // Echo the bytes back to the client:
-            server.write(thisChar);
-            // Echo the bytes to the server as well:
-            Serial.write(thisChar);
+            Serial.println("Input received");
+            message += thisChar;
         }
     }
+    message.trim();
+    return message;
 }
 
 
@@ -123,10 +127,19 @@ void moveForwards() {
     digitalWrite(Motor2Pin2, HIGH);
 }
 
-void stopMoving() {
+void stopWheels() {
     digitalWrite(Motor1Pin2, LOW);
     digitalWrite(Motor1Pin1, LOW);
     digitalWrite(Motor2Pin1, LOW);
     digitalWrite(Motor2Pin2, LOW);
 }
 
+void moveArm() {
+    digitalWrite(MotorArmPin1, HIGH);
+    digitalWrite(MotorArmPin2, LOW);
+}
+
+void stopArm() {
+    digitalWrite(MotorArmPin1, LOW);
+    digitalWrite(MotorArmPin2, LOW);
+}
