@@ -24,9 +24,6 @@ void setup() {
     Serial.begin(9600);
     initializeMotors();
     startServer();
-    
-    //moveForwards();
-    //moveArm();
 }
 
 
@@ -34,7 +31,14 @@ void loop() {
     String message = getClientMessage();
     
     if(message.length() > 0) {
-        Serial.println(message);
+        Serial.println("[CLIENT]: " + message);
+        
+        if(message == "/go" || message == "/start") {
+            moveForwards();
+        }
+        else if (message == "/stop") {
+            stopWheels();
+        }
     }
 }
 
@@ -81,17 +85,17 @@ String getClientMessage() {
     
     // When the client sends the first byte, say hello:
     if (client) {
+        
         if (!alreadyConnected) {
             // Clean out the input buffer:
             client.flush();
-            Serial.println("New client connected.");
+            Serial.println("(LOG) New client connected.");
             client.println("Hello, client!");
             alreadyConnected = true;
-        } 
+        }
         
         while (client.available() > 0) {
             char thisChar = client.read();
-            Serial.println("Input received");
             message += thisChar;
         }
     }
@@ -121,6 +125,7 @@ void printWifiStatus() {
 
 
 void moveForwards() {
+    Serial.println("(LOG) [WHEELS :: START :: FORWARD]");
     digitalWrite(Motor1Pin1, LOW);
     digitalWrite(Motor1Pin2, HIGH);
     digitalWrite(Motor2Pin1, LOW);
@@ -128,6 +133,7 @@ void moveForwards() {
 }
 
 void stopWheels() {
+    Serial.println("(LOG) [WHEELS :: STOP]");
     digitalWrite(Motor1Pin2, LOW);
     digitalWrite(Motor1Pin1, LOW);
     digitalWrite(Motor2Pin1, LOW);
@@ -135,11 +141,13 @@ void stopWheels() {
 }
 
 void moveArm() {
+    Serial.println("(LOG) [ARM :: START]");
     digitalWrite(MotorArmPin1, HIGH);
     digitalWrite(MotorArmPin2, LOW);
 }
 
 void stopArm() {
+    Serial.println("(LOG) [ARM :: STOP]");
     digitalWrite(MotorArmPin1, LOW);
     digitalWrite(MotorArmPin2, LOW);
 }
