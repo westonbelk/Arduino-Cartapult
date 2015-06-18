@@ -18,6 +18,11 @@ int status = WL_IDLE_STATUS;
 WiFiServer server(23);
 boolean alreadyConnected = false;
 
+// Initialize timer variables
+boolean launched = false;
+long launchDuration = 2000;
+long timeGoal = 0;
+
 
 
 void setup() {
@@ -36,18 +41,31 @@ void loop() {
         if (message == "/help") {
             Serial.println("-----\nAvailable Commands\n-----\n/forwards\n/stop\n/launch\n/retract\n-----");
         }
-        else if(message == "/forwards") {
+        else if (message == "/forwards" || message == "w") {
             moveForwards();
         }
-        else if (message == "/stop") {
+        else if (message == "/backwards" || message == "s") {
+            moveBackwards();
+        }
+        else if (message == "/left" || message == "a") {
+            turnLeft();
+        }
+        else if (message == "/right" || message == "d") {
+            turnRight();
+        }
+        else if (message == "/stop" || message == "x") {
             stopWheels();
         }
         else if (message == "/launch") {
             moveArm();
+            launched = true;
+            timeGoal = launchDuration + millis();
         }
-        else if (message == "/retract") {
-            stopArm();
-        }
+    }
+    
+    if (launched && timeGoal <= millis()) {
+        stopArm();
+        launched = false;
     }
 }
 
@@ -81,7 +99,7 @@ void startServer() {
         delay(10000);
     } 
     server.begin();
-    printWifiStatus();    
+    printWifiStatus();
 }
 
 
@@ -141,6 +159,30 @@ void moveForwards() {
     digitalWrite(Motor2Pin2, HIGH);
 }
 
+void moveBackwards() {
+    Serial.println("(LOG) [WHEELS :: START :: REVERSE]");
+    digitalWrite(Motor1Pin1, HIGH);
+    digitalWrite(Motor1Pin2, LOW);
+    digitalWrite(Motor2Pin1, HIGH);
+    digitalWrite(Motor2Pin2, LOW);
+}
+
+void turnRight() {
+    Serial.println("(LOG) [WHEELS :: START :: RIGHT]");
+    digitalWrite(Motor1Pin1, LOW);
+    digitalWrite(Motor1Pin2, LOW);
+    digitalWrite(Motor2Pin1, LOW);
+    digitalWrite(Motor2Pin2, HIGH);
+}
+
+void turnLeft() {
+    Serial.println("(LOG) [WHEELS :: START :: LEFT]");
+    digitalWrite(Motor1Pin1, LOW);
+    digitalWrite(Motor1Pin2, HIGH);
+    digitalWrite(Motor2Pin1, LOW);
+    digitalWrite(Motor2Pin2, LOW);
+}
+
 void stopWheels() {
     Serial.println("(LOG) [WHEELS :: STOP]");
     digitalWrite(Motor1Pin2, LOW);
@@ -148,6 +190,7 @@ void stopWheels() {
     digitalWrite(Motor2Pin1, LOW);
     digitalWrite(Motor2Pin2, LOW);
 }
+
 
 void moveArm() {
     Serial.println("(LOG) [ARM :: START]");
