@@ -3,10 +3,10 @@
 
 
 // Define the pins that power the motors.
-const int Motor1Pin1 = 9;
-const int Motor1Pin2 = 8;
-const int Motor2Pin1 = 5;
-const int Motor2Pin2 = 6;
+const int Motor1Pin1 = 5;
+const int Motor1Pin2 = 6;
+const int Motor2Pin1 = 9;
+const int Motor2Pin2 = 8;
 const int MotorArmPin = 4;
 
 
