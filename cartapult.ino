@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <WiFi.h>
 
+
 // Define the pins that power the motors.
 const int Motor1Pin1 = 9;
 const int Motor1Pin2 = 8;
@@ -17,11 +18,11 @@ int status = WL_IDLE_STATUS;
 WiFiServer server(23);
 boolean alreadyConnected = false;
 
+
 // Initialize timer variables
 boolean launched = false;
 long launchDuration = 600;
 long timeGoal = 0;
-
 
 
 void setup() {
@@ -77,6 +78,7 @@ void initializeMotors() {
     pinMode(MotorArmPin, OUTPUT);
 }
 
+
 void startServer() {
     // Check for the presence of the shield:
     if (WiFi.status() == WL_NO_SHIELD) {
@@ -99,8 +101,6 @@ void startServer() {
     server.begin();
     printWifiStatus();
 }
-
-
 
 
 String getClientMessage() {
@@ -127,8 +127,6 @@ String getClientMessage() {
     message.trim();
     return message;
 }
-
-
 
 
 void printWifiStatus() {
@@ -189,7 +187,6 @@ void stopWheels() {
     digitalWrite(Motor2Pin2, LOW);
 }
 
-
 void moveArm() {
     Serial.println("(LOG) [ARM :: START]");
     digitalWrite(MotorArmPin, HIGH);
@@ -199,3 +196,4 @@ void stopArm() {
     Serial.println("(LOG) [ARM :: STOP]");
     digitalWrite(MotorArmPin, LOW);
 }
+
