@@ -2,12 +2,11 @@
 #include <WiFi.h>
 
 // Define the pins that power the motors.
-const int Motor1Pin1 = 8;
-const int Motor1Pin2 = 9;
-const int Motor2Pin1 = 6;
-const int Motor2Pin2 = 5;
-const int MotorArmPin1 = 3;
-const int MotorArmPin2 = 4;
+const int Motor1Pin1 = 9;
+const int Motor1Pin2 = 8;
+const int Motor2Pin1 = 5;
+const int Motor2Pin2 = 6;
+const int MotorArmPin = 4;
 
 
 // Initialize some variables for the WiFi
@@ -20,7 +19,7 @@ boolean alreadyConnected = false;
 
 // Initialize timer variables
 boolean launched = false;
-long launchDuration = 2000;
+long launchDuration = 600;
 long timeGoal = 0;
 
 
@@ -56,7 +55,7 @@ void loop() {
         else if (message == "/stop" || message == "x") {
             stopWheels();
         }
-        else if (message == "/launch") {
+        else if (message == "/launch" || message == "e") {
             moveArm();
             launched = true;
             timeGoal = launchDuration + millis();
@@ -75,8 +74,7 @@ void initializeMotors() {
     pinMode(Motor1Pin2, OUTPUT);
     pinMode(Motor2Pin1, OUTPUT);
     pinMode(Motor2Pin2, OUTPUT);
-    pinMode(MotorArmPin1, OUTPUT);
-    pinMode(MotorArmPin2, OUTPUT);
+    pinMode(MotorArmPin, OUTPUT);
 }
 
 void startServer() {
@@ -194,12 +192,10 @@ void stopWheels() {
 
 void moveArm() {
     Serial.println("(LOG) [ARM :: START]");
-    digitalWrite(MotorArmPin1, HIGH);
-    digitalWrite(MotorArmPin2, LOW);
+    digitalWrite(MotorArmPin, HIGH);
 }
 
 void stopArm() {
     Serial.println("(LOG) [ARM :: STOP]");
-    digitalWrite(MotorArmPin1, LOW);
-    digitalWrite(MotorArmPin2, LOW);
+    digitalWrite(MotorArmPin, LOW);
 }
